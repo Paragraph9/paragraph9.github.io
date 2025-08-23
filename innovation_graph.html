@@ -85,7 +85,7 @@
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
-        }ny
+        }
     </style>
 </head>
 <body>
@@ -146,8 +146,6 @@
             // RIFF type
             writeString(view, 8, 'WAVE');
             // format chunk identifier
-            writeString(view, 12, 'fmt ');
-            // format chunk length
             view.setUint32(16, 16, true);
             // sample format (raw PCM)
             view.setUint16(20, 1, true);
@@ -544,13 +542,15 @@
             explanationText.textContent = '';
             loadingSpinner.classList.remove('hidden');
 
-            const prompt = `Based on a timeline of AI, Cloud, and Social Media events, explain the qualitative ${rateType} rate for ${technology} in the year ${year}. Focus on major events or trends that contributed to this rate. Keep the explanation concise, around 3-4 sentences.`;
+            // Constructing a more specific prompt for the LLM
+            const prompt = `Provide a concise, 3-4 sentence explanation for the qualitative ${rateType} rate of ${technology} in the year ${year}, based on major historical events and trends. For example, mention key product launches, significant shifts in usage, or foundational technological advancements.`;
 
             let chatHistory = [];
             chatHistory.push({ role: "user", parts: [{ text: prompt }] });
             const payload = { contents: chatHistory };
-            const apiKey = ""; // Canvas will provide this in runtime
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+            // The API key is now fetched from a secure proxy endpoint.
+            // Replace '/api/gemini-proxy' with the actual URL of your deployed serverless function.
+            const proxyUrl = '/api/gemini-proxy'; // This is a placeholder.
 
             let retries = 0;
             const maxRetries = 5;
@@ -558,10 +558,10 @@
 
             while (retries < maxRetries) {
                 try {
-                    const response = await fetch(apiUrl, {
+                    const response = await fetch(proxyUrl, { // Call your proxy endpoint
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
+                        body: JSON.stringify({ prompt: prompt }) // Send the prompt to your proxy
                     });
 
                     if (response.status === 429) { // Too Many Requests
@@ -571,26 +571,34 @@
                         continue;
                     }
 
-                    const result = await response.json();
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        console.error(`Proxy Error (${response.status}):`, errorData);
+                        explanationText.textContent = `Proxy Error: ${errorData.message || 'Unknown error from proxy. Check console for details.'}`;
+                        break;
+                    }
+
+                    const result = await response.json(); // The proxy should return the Gemini API's result
                     if (result.candidates && result.candidates.length > 0 &&
                         result.candidates[0].content && result.candidates[0].content.parts &&
                         result.candidates[0].content.parts.length > 0) {
                         const text = result.candidates[0].content.parts[0].text;
                         explanationText.textContent = text;
                     } else {
-                        explanationText.textContent = `Could not generate an explanation for the ${rateType} of ${technology} in ${year}.`;
+                        explanationText.textContent = `Could not generate an explanation. Unexpected response from proxy.`;
+                        console.warn('Unexpected proxy response structure:', result);
                     }
-                    break; // Exit loop on success
+                    break;
                 } catch (error) {
-                    console.error('Error calling Gemini API:', error);
-                    explanationText.textContent = 'Failed to fetch explanation. Please try again.';
-                    break; // Exit loop on error
+                    console.error('Network or proxy call failed:', error);
+                    explanationText.textContent = 'Failed to connect to the explanation service. Please check your network or proxy setup.';
+                    break;
                 } finally {
                     loadingSpinner.classList.add('hidden');
                 }
             }
             if (retries === maxRetries) {
-                explanationText.textContent = 'Failed to fetch explanation after multiple retries. Please try again later.';
+                explanationText.textContent = 'Failed to fetch explanation after multiple retries. Please ensure your proxy is correctly deployed and configured.';
             }
         }
     </script>
