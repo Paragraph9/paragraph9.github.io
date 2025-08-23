@@ -550,7 +550,7 @@
             const payload = { contents: chatHistory };
             // The API key is now fetched from a secure proxy endpoint.
             // Replace '/api/gemini-proxy' with the actual URL of your deployed serverless function.
-            const proxyUrl = '/api/gemini-proxy'; // This is a placeholder.
+            const proxyUrl = '/.netlify/functions/gemini-proxy'; // This is a placeholder.
 
             let retries = 0;
             const maxRetries = 5;
