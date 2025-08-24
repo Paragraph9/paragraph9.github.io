@@ -1,4 +1,4 @@
-// netlify/functions/gemini-proxy.js
+// netlify/functions/gemini-proxy.js copyright Paragraph9
 const fetch = require('node-fetch');
 
 exports.handler = async function(event, context) {
@@ -7,7 +7,7 @@ exports.handler = async function(event, context) {
     }
 
     const { prompt } = JSON.parse(event.body);
-    const apiKey = process.env.GEMINI_API_KEY; // Access the secret environment variable
+    const apiKey = process.env.GEMINI_API_KEY;
 
     if (!apiKey) {
         return { statusCode: 500, body: 'API Key not configured.' };

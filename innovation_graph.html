@@ -95,7 +95,7 @@
             <canvas id="innovationChart"></canvas>
         </div>
         <p class="disclaimer mb-6">
-            *Note: These rates are subjective scores (1-10) based on the density and impact of major events and widespread usage.<br>Model:Google Gemini Flash 2.5<br>
+            *Note: These rates are subjective scores (1-10) based on the density and impact of major events and widespread usage.<br>Model:Google Gemini Flash 2.5, Paragraph9-KA<br>
         </p>
         <div class="mt-8 text-gray-700 text-center">
             <p class="mb-4">
@@ -550,9 +550,7 @@
             let chatHistory = [];
             chatHistory.push({ role: "user", parts: [{ text: prompt }] });
             const payload = { contents: chatHistory };
-            // The API key is now fetched from a secure proxy endpoint.
-            // Replace '/api/gemini-proxy' with the actual URL of your deployed serverless function.
-            const proxyUrl = '/.netlify/functions/gemini-proxy'; // This is a placeholder.
+            const proxyUrl = '/.netlify/functions/gemini-proxy';
 
             let retries = 0;
             const maxRetries = 5;
@@ -560,11 +558,10 @@
 
             while (retries < maxRetries) {
                 try {
-                    const response = await fetch(proxyUrl, { // Call your proxy endpoint
+                    const response = await fetch(proxyUrl, { 
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ prompt: prompt }) // Send the prompt to your proxy
-                    });
+                        body: JSON.stringify({ prompt: prompt })                    });
 
                     if (response.status === 429) { // Too Many Requests
                         retries++;
@@ -580,7 +577,7 @@
                         break;
                     }
 
-                    const result = await response.json(); // The proxy should return the Gemini API's result
+                    const result = await response.json();
                     if (result.candidates && result.candidates.length > 0 &&
                         result.candidates[0].content && result.candidates[0].content.parts &&
                         result.candidates[0].content.parts.length > 0) {
