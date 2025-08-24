@@ -90,26 +90,23 @@
 </head>
 <body>
     <div class="chart-container">
-        <h1 class="text-3xl font-bold text-gray-800 mb-6">Comparison of AI/Cloud/Social Media Innovation & Adoption Rates</h1>
-        <div class="mb-6 text-gray-700 text-center">
-            <p class="mb-2">
-                The graph illustrates two key metrics for each technology:
-            </p>
-            <p class="mb-1">
-                <span class="font-semibold text-gray-800">Innovation Rate (Solid Lines):</span> Represents the pace and impact of innovative shifts within the technology. Indicates how quickly tech companies are releasing new ways to use the technology.
+        <h1 class="text-3xl font-bold text-gray-800 mb-6">Comparison of Technology Innovation & Adoption Rates</h1>
+        <div class="relative w-full h-96 md:h-[500px]"> <!-- Responsive height for canvas -->
+            <canvas id="innovationChart"></canvas>
+        </div>
+        <p class="disclaimer mb-6">
+            *Note: These rates are subjective scores (1-10) based on the density and impact of major events and widespread usage.<br>Model:Google Gemini Flash 2.5<br>
+        </p>
+        <div class="mt-8 text-gray-700 text-center">
+            <p class="mb-4">
+                <span class="font-semibold text-gray-800">Innovation Rate (Solid Lines):</span> Pace and impact of innovative shifts within the technology. Indicates how quickly tech companies are releasing new ways to use the technology.
             </p>
             <p>
                 <span class="font-semibold text-gray-800">Adoption Rate (Dashed Lines):</span> Reflects how widely and quickly the technology is being embraced and integrated into daily lives. Indicates the pace at which people are accepting and using the technology.
             </p>
         </div>
-        <div class="relative w-full h-96 md:h-[500px]"> <!-- Responsive height for canvas -->
-            <canvas id="innovationChart"></canvas>
-        </div>
-        <p class="disclaimer">
-            *Note: These rates are subjective scores (1-10) based on the density and impact of major events and widespread usage. They serve as visual representations for comparative purposes rather than precise quantitative measurements. Click on a point to get an explanation of the event! Created with the help of Google Gemini Flash 2.5
-        </p>
     </div>
-
+    
     <!-- Explanation Modal -->
     <div id="explanationModal" class="modal-overlay hidden">
         <div class="modal-content">
@@ -419,7 +416,12 @@
                 plugins: {
                     title: {
                         display: true,
-                        text: 'Qualitative Innovation vs. Adoption Rate Comparison (1-10 Scale)',
+                        text: [
+                            'Cloud vs. AI. vs. Social Media',
+                            '',
+                            'Click on a Graph Point to Display Event Details',
+                            '',
+                        ],
                         font: {
                             size: 18,
                             weight: 'bold'
