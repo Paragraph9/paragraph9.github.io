@@ -8,7 +8,7 @@ const rateLimitStore = new Map();
 const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1 minute
 const MAX_REQUESTS_PER_WINDOW = 10; // 10 requests per minute per IP
 const MAX_PROMPT_LENGTH = 500; // Maximum characters in prompt
-const MAX_OUTPUT_TOKENS = 1000; // Limit output tokens to control costs (increased for complete responses)
+const MAX_OUTPUT_TOKENS = 8000; // High limit to ensure complete responses (still within API limits)
 
 // Allowed origins (configure based on your deployment)
 const ALLOWED_ORIGINS = [
@@ -209,7 +209,7 @@ export const handler = async (event, context) => {
 
   try {
     const geminiResponse = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro-latest:generateContent?key=${apiKey}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`,
       {
         method: 'POST',
         headers: {
