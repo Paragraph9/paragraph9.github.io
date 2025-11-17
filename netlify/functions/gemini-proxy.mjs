@@ -203,13 +203,13 @@ export const handler = async (event, context) => {
     ],
     generationConfig: {
       maxOutputTokens: MAX_OUTPUT_TOKENS,
-      temperature: 0.7,
+      temperature: 0.9,
     }
   };
 
   try {
     const geminiResponse = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro-latest:generateContent?key=${apiKey}`,
       {
         method: 'POST',
         headers: {
