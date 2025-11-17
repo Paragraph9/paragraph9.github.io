@@ -578,14 +578,25 @@
                     }
 
                     const result = await response.json();
-                    if (result.candidates && result.candidates.length > 0 &&
-                        result.candidates[0].content && result.candidates[0].content.parts &&
-                        result.candidates[0].content.parts.length > 0) {
-                        const text = result.candidates[0].content.parts[0].text;
-                        explanationText.textContent = text;
+                    if (result.candidates && result.candidates.length > 0) {
+                        const candidate = result.candidates[0];
+
+                        // Check if response was truncated due to token limits
+                        if (candidate.finishReason === 'MAX_TOKENS') {
+                            explanationText.textContent = 'Response was too long and got truncated. Please try again.';
+                            console.warn('Response hit MAX_TOKENS limit:', result);
+                        } else if (candidate.content && candidate.content.parts &&
+                                   candidate.content.parts.length > 0 &&
+                                   candidate.content.parts[0].text) {
+                            const text = candidate.content.parts[0].text;
+                            explanationText.textContent = text;
+                        } else {
+                            explanationText.textContent = `Could not generate an explanation. Unexpected response format.`;
+                            console.warn('Unexpected proxy response structure:', result);
+                        }
                     } else {
-                        explanationText.textContent = `Could not generate an explanation. Unexpected response from proxy.`;
-                        console.warn('Unexpected proxy response structure:', result);
+                        explanationText.textContent = `Could not generate an explanation. No candidates returned.`;
+                        console.warn('No candidates in response:', result);
                     }
                     break;
                 } catch (error) {

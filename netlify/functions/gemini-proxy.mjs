@@ -8,7 +8,7 @@ const rateLimitStore = new Map();
 const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1 minute
 const MAX_REQUESTS_PER_WINDOW = 10; // 10 requests per minute per IP
 const MAX_PROMPT_LENGTH = 500; // Maximum characters in prompt
-const MAX_OUTPUT_TOKENS = 200; // Limit output tokens to control costs
+const MAX_OUTPUT_TOKENS = 400; // Limit output tokens to control costs (increased for better responses)
 
 // Allowed origins (configure based on your deployment)
 const ALLOWED_ORIGINS = [
