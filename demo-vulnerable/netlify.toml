@@ -1,0 +1,32 @@
+# Netlify Configuration for VULNERABLE Demo
+# ⚠️ FOR TESTING ONLY - DO NOT USE IN PRODUCTION
+
+[build]
+  publish = "."
+  functions = "."  # Functions in same directory as this file
+
+[build.environment]
+  NODE_VERSION = "18"
+
+[functions]
+  node_bundler = "esbuild"
+
+# WARNING: Intentionally insecure headers for demonstration
+[[headers]]
+  for = "/*"
+  [headers.values]
+    # VULNERABLE: No security headers
+    Access-Control-Allow-Origin = "*"
+    X-Frame-Options = "ALLOWALL"
+    # Missing: CSP, HSTS, X-Content-Type-Options, etc.
+
+[[headers]]
+  for = "/.netlify/functions/*"
+  [headers.values]
+    # VULNERABLE: Open CORS for demonstration
+    Access-Control-Allow-Origin = "*"
+    Access-Control-Allow-Methods = "GET, POST, PUT, DELETE, OPTIONS"
+    Access-Control-Allow-Headers = "*"
+    # Missing: Rate limiting, authentication headers
+
+# No redirects or security rules intentionally

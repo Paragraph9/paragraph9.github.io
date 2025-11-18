@@ -1,0 +1,13 @@
+# Environment variables
+.env
+.env.local
+
+# Netlify
+.netlify/
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db

@@ -147,9 +147,28 @@ For issues or questions:
 - Check Netlify function logs for runtime errors
 - Review Google Cloud Console for API quota issues
 
+## Vulnerable Demo for Security Testing
+
+⚠️ **For Security Professionals**: A deliberately vulnerable version is available in the [demo-vulnerable/](demo-vulnerable/) directory for:
+- Security training and demonstrations
+- Testing Strix and other security scanning tools
+- Understanding AI security vulnerabilities
+- Comparing vulnerable vs. secure implementations
+
+**See [demo-vulnerable/README.md](demo-vulnerable/README.md) for details.**
+
+**⛔ WARNING**: Only deploy to isolated test environments. Never use in production.
+
 ## Changelog
 
-### 2025-11-16 - Security Hardening
+### 2025-11-17 - AI Security Hardening & Demo
+- Added prompt injection prevention (regex validation)
+- Implemented AI system instructions to prevent SSRF
+- Created vulnerable demo for Strix testing
+- Comprehensive AI security documentation
+- Defense-in-depth security controls
+
+### 2025-11-16 - Initial Security Hardening
 - Implemented secure API proxy with origin validation
 - Added rate limiting (10 req/min per IP)
 - Added input validation and cost controls
