@@ -189,6 +189,20 @@ Consider integrating:
 - Google Cloud Monitoring for API quota alerts
 - Log aggregation (e.g., Datadog, LogRocket)
 
+## AI-Specific Security Controls
+
+**See [AI-SECURITY.md](AI-SECURITY.md) for detailed AI security documentation.**
+
+The application now includes comprehensive protections against AI model abuse:
+
+1. **Prompt Injection Prevention**: Regex-based validation blocks malicious patterns
+2. **SSRF Prevention**: Blocks attempts to make AI fetch URLs or resolve DNS
+3. **System Instructions**: AI constrained to only discuss technology history
+4. **Safety Settings**: Google's content filtering enabled
+5. **Defense in Depth**: Multiple layers of protection
+
+These controls mitigate risks from AI model capabilities being used as an attack vector.
+
 ## Additional Security Recommendations
 
 ### Immediate Actions
@@ -196,6 +210,7 @@ Consider integrating:
 2. Rotate Gemini API key if abuse is suspected
 3. Set budget alerts in Google Cloud Console
 4. Consider implementing API key rotation schedule
+5. **Monitor blocked prompts**: Track patterns caught by AI security filters
 
 ### Future Enhancements
 1. **Authentication Layer:**
