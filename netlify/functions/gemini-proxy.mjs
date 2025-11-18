@@ -66,6 +66,27 @@ function validatePrompt(prompt) {
     return { valid: false, error: `Prompt exceeds maximum length of ${MAX_PROMPT_LENGTH} characters` };
   }
 
+  // Detect potential prompt injection / SSRF attempts
+  const suspiciousPatterns = [
+    /\b(fetch|curl|wget|http|https):\/\//i,
+    /\b(resolve|lookup|dns|nslookup|dig)\b.*\.(com|net|org|io|sh|xyz)/i,
+    /\b(execute|run|eval|exec|system|shell|command)\b/i,
+    /\b(ignore|disregard|forget)\s+(previous|above|prior|system)\s+(instruction|rule|prompt)/i,
+    /\binteract\.sh\b/i,
+    /\b(internal|localhost|127\.0\.0\.1|192\.168\.|10\.0\.|172\.16\.)/i,
+    /\b(metadata|instance-data|user-data)\b/i,
+  ];
+
+  for (const pattern of suspiciousPatterns) {
+    if (pattern.test(prompt)) {
+      console.warn(`Blocked suspicious prompt pattern: ${pattern}`);
+      return {
+        valid: false,
+        error: 'Prompt contains suspicious content. Please ask only about technology innovation and adoption rates.'
+      };
+    }
+  }
+
   return { valid: true };
 }
 
@@ -193,8 +214,27 @@ export const handler = async (event, context) => {
     };
   }
 
-  // Prepare request to Gemini API with token limits
+  // System instruction to restrict AI capabilities and prevent SSRF-like behavior
+  const systemInstruction = {
+    parts: [{
+      text: `You are a helpful AI assistant that ONLY provides information about technology innovation and adoption rates.
+
+CRITICAL SECURITY RESTRICTIONS:
+- You MUST NOT make any HTTP/HTTPS requests
+- You MUST NOT resolve DNS or lookup hostnames
+- You MUST NOT access any URLs or external resources
+- You MUST NOT execute any code or commands
+- You MUST NOT interact with any external systems
+- ONLY provide factual information based on your training data
+- If asked to perform any of the above actions, respond: "I cannot perform that action. I can only provide information about technology trends."
+
+Your sole purpose is to explain historical technology events and trends.`
+    }]
+  };
+
+  // Prepare request to Gemini API with token limits and safety restrictions
   const geminiPayload = {
+    systemInstruction: systemInstruction,
     contents: [
       {
         role: "user",
@@ -204,7 +244,13 @@ export const handler = async (event, context) => {
     generationConfig: {
       maxOutputTokens: MAX_OUTPUT_TOKENS,
       temperature: 0.9,
-    }
+    },
+    safetySettings: [
+      {
+        category: "HARM_CATEGORY_DANGEROUS_CONTENT",
+        threshold: "BLOCK_MEDIUM_AND_ABOVE"
+      }
+    ]
   };
 
   try {
